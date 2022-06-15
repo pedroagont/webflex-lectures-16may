@@ -7,6 +7,10 @@
 - [ ] TCP demo
 - [ ] HTTP fundamentals
 
+### Video
+
+[https://vimeo.com/720841126/e0d11f6aeb](https://vimeo.com/720841126/e0d11f6aeb)
+
 ### What is networking?
 
 - Communication between machines on a network
