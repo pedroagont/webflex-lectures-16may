@@ -7,6 +7,10 @@
 - [ ] Tools of the Trade
 - [ ] Discuss!
 
+### Video
+
+[https://vimeo.com/761597689/34dd29bb72](https://vimeo.com/761597689/34dd29bb72)
+
 ## What is a Project?
 
 By definition, we describe a project as a planned set of tasks or undertaking. For your execution to be called a project, there needs to be some sort of requirement(s), and a plan in order to reach that desired outcome. So what does that look like?
