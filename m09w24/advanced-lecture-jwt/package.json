@@ -1,0 +1,27 @@
+{
+  "name": "advanced-lecture-jwt",
+  "version": "1.0.0",
+  "description": "Advanced lecture with JWT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "crud",
+    "expressjs",
+    "jwt"
+  ],
+  "author": "Pedro A. González",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.18.0",
+    "helmet": "^6.0.0",
+    "morgan": "^1.10.0"
+  }
+}
