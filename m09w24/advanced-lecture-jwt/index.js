@@ -3,6 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // Database
 const fruitsDB = {
@@ -30,7 +31,8 @@ const usersDB = [
 
 // ----------------------- SETUP AND MIDDLEWARES
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+const SECRET = process.env.SECRET || 'MYSUPERSECRET123'
 
 app.use(helmet()); // includes security headers (owasp)
 app.use(morgan('dev')); // middleware that logs all the requests
@@ -47,7 +49,7 @@ app.get('/home', (req, res) => {
 
 // CRUD Operations
 // CREATE - POST
-app.post('/api/fruits', (req, res) => {
+app.post('/api/fruits', verifyToken, (req, res) => {
   const { name, color, emoji } = req.body;
   if (!name || !color || !emoji) {
     return res
@@ -66,7 +68,7 @@ app.post('/api/fruits', (req, res) => {
     emoji
   };
 
-  res.status(201).send({ message: 'Created!', fruit: fruitsDB[id] });
+  res.status(201).send({ message: 'Created!', fruit: fruitsDB[id]});
 });
 
 // READ - GET
@@ -88,7 +90,7 @@ app.get('/api/fruits/:id', (req, res) => {
 });
 
 // UPDATE - PUT
-app.put('/api/fruits/:id', (req, res) => {
+app.put('/api/fruits/:id', verifyToken, (req, res) => {
   const { name, color, emoji } = req.body;
   if (!name || !color || !emoji) {
     return res
@@ -114,7 +116,7 @@ app.put('/api/fruits/:id', (req, res) => {
 });
 
 // DELETE - DELETE
-app.delete('/api/fruits/:id', (req, res) => {
+app.delete('/api/fruits/:id', verifyToken, (req, res) => {
   const { id } = req.params;
 
   let fruit = fruitsDB[id];
@@ -187,15 +189,45 @@ app.post('/api/auth/login', (req, res) => {
   if (!passwordsMatch) {
     return res.status(400).send({ message: 'Invalid credentials' });
   }
+  
+  // After all validations, we create the payload
+  const payload = {
+    id: user.id,
+    email: user.email
+  }
+  
+  // Generate token
+  const token = jwt.sign(payload, SECRET);
 
   // Respond back to client
-  res.status(200).send({ message: 'Welcome!' });
+  res.status(200).send({ message: 'Welcome!', token });
 });
 
 // Catch all route
 app.use((req, res) => {
   res.status(404).send({ message: 'URL Not found' });
 });
+
+function verifyToken(req, res, next) {
+  // console.log(req.headers)
+  const authorizationHeader = req.headers.authorization
+  if(!authorizationHeader) {
+    return res.status(403).send({ message: 'Authorization header not valid'})
+  }
+
+  const token = authorizationHeader.split(' ')[1]
+  if(!token) {
+    return res.status(403).send({ message: 'Token does not exists'})
+  }
+  
+  jwt.verify(token, SECRET, (err, decoded) => {
+    if(err){
+      return res.status(403).send({ message: 'Token is not valid'})
+    }
+    
+    next()
+  });
+}
 
 // ----------------------- LISTENER
 app.listen(port, () => console.log(`Example app listening on port ${port}`));
